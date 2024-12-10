@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Hexa.NET.ImGui" Version="2.2.3" />
+      <PackageReference Include="Hexa.NET.ImGui.Backends" Version="1.0.11" />
+      <PackageReference Include="Hexa.NET.OpenGL.Core" Version="1.1.0" />
+      <PackageReference Include="Hexa.NET.OpenGL4" Version="1.1.0" />
+      <PackageReference Include="Hexa.NET.SDL3" Version="1.0.0" />
+      <PackageReference Include="Hexa.NET.Shaderc" Version="1.0.0" />
+      <PackageReference Include="Hexa.NET.SPIRVReflect" Version="1.0.1" />
+      <PackageReference Include="Hexa.NET.Unsafe.Analyzers" Version="1.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Hexa.NET.Utilities" Version="2.2.1" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.12.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.12.0" />
+      <PackageReference Include="ShaderGen" Version="1.2.0-beta3" />
+    </ItemGroup>
+
+</Project>
