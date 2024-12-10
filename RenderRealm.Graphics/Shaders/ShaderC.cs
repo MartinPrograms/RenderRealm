@@ -9,7 +9,7 @@ namespace RenderRealm.Graphics.Shaders;
 /// <summary>
 /// Almost 1:1 to a regular shader, however this one uses spirv instead of regular GLSL
 /// </summary>
-public class ShaderC
+public class ShaderC : IShader
 {
     public uint Handle { get; private set; }
     public List<ShaderStage> Stages { get; private set; }
@@ -108,7 +108,7 @@ public class ShaderC
         GraphicsContext.GL.DeleteProgram(Handle);
     }
     
-    public void SetUniform<T>(string name, T value)
+    public void SetUniform<T>(string name, T value, bool vertexOnly = false)
     {
         var gl = GraphicsContext.GL;
         var location = gl.GetUniformLocation(Handle, name);

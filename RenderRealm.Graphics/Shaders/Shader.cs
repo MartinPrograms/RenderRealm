@@ -92,7 +92,7 @@ public class Shader : IShader
         GraphicsContext.GL.DeleteProgram(Handle);
     }
     
-    public void SetUniform<T>(string name, T value)
+    public void SetUniform<T>(string name, T value, bool vertexOnly = false)
     {
         var gl = GraphicsContext.GL;
         var location = gl.GetUniformLocation(Handle, name);
@@ -224,5 +224,5 @@ public interface IShader
 {
     public void Use();
     public void Dispose();
-    public void SetUniform<T>(string name, T value);
+    public void SetUniform<T>(string name, T value, bool vertexOnly = false);
 }
