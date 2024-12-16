@@ -2,6 +2,7 @@
 using Hexa.NET.ImGui;
 using Hexa.NET.SDL3;
 using Hexa.NET.Shaderc;
+using RenderRealm;
 using RenderRealm.Graphics;
 using RenderRealm.Graphics.Common;
 using RenderRealm.Graphics.Shaders;
@@ -13,23 +14,49 @@ var gl = window.GL;
 
 // How we create a shader without ANY fancy tools like SpirV or ShaderGen
 // This is used on platforms where we can not use spirv or shadergen
-var shader = new Shader(new ShaderStage(File.ReadAllText("Shaders/Test.vert"), ShaderType.Vertex), new ShaderStage(File.ReadAllText("Shaders/Test.frag"), ShaderType.Fragment));
+var shader = new Shader(new ShaderStage(File.ReadAllText("../../../Shaders/Test.vert"), ShaderType.Vertex), new ShaderStage(File.ReadAllText("../../../Shaders/Test.frag"), ShaderType.Fragment));
 
-var shaderc = new ShaderCManager(ShaderCManager.DefaultOptions);
-var vert = shaderc.Compile(File.ReadAllText("../../../Shaders/SpirV/Test.vert"), "../../../Shaders/SpirV/Test.vert", ShadercShaderKind.VertexShader, "main", out var vertReflection);
-var frag = shaderc.Compile(File.ReadAllText("../../../Shaders/SpirV/Test.frag"), "../../../Shaders/SpirV/Test.frag", ShadercShaderKind.FragmentShader, "main", out var fragReflection);
+var renderer = new ShaderRenderer(shader, Mesh.Square, 300,300);
 
-Shader? coolShader = null;
-if (vert.HasValue && frag.HasValue)
+Complex pos = new (-0.5f, 0);
+double zoom = 1.0;
+var iterations = 500;
+Vector3 posLight = new Vector3(0.5f, 0.5f, 1f);
+
+var crefOrbits = new Complex[500];
+
+void changeCrefArray()
 {
-    coolShader = new Shader(new []{new ShaderStage(vert.Value, ShaderType.Vertex), new ShaderStage(frag.Value, ShaderType.Fragment)});
-}
-else
-{
-    coolShader = Shader.ErrorShader;
+    // Use the mandelbrot iteration Zn+1 = Zn^2 + C to calculate the orbit of the complex number C
+    var cref = new Complex(pos.Real, pos.Imaginary);
+    cref = MandelbrotUtilities.CRef(zoom, cref);
+    var z = new Complex(0, 0);
+    for (int i = 0; i < crefOrbits.Length; i++)
+    {
+        z = z * z + cref;
+        crefOrbits[i] = z;
+    }
+    
 }
 
-var renderer = new ShaderRenderer(coolShader, Mesh.Square, 300,300);
+renderer.SetUniforms += () =>
+{
+    var cref = new Complex(pos.Real, pos.Imaginary);
+    cref = MandelbrotUtilities.CRef(zoom, cref);
+    
+    changeCrefArray();
+    
+    renderer.Shader.SetUniform("cref", new Vector2((float)cref.Real, (float)cref.Imaginary)); 
+    renderer.Shader.SetArray("crefOrbit", crefOrbits);
+    
+    renderer.Shader.SetUniform("pos", pos);
+    renderer.Shader.SetUniform("zoom", zoom);
+    renderer.Shader.SetUniform("iterations", iterations);
+    renderer.Shader.SetUniform("u_time", (float)Time.TotalTime);
+    renderer.Shader.SetUniform("u_resolution", new Vector2(renderer.FrameBuffer.Width, renderer.FrameBuffer.Height));
+    
+    renderer.Shader.SetUniform("posLight", posLight);
+};
 
 window.Render += () =>
 {
@@ -46,11 +73,72 @@ window.Render += () =>
     ImGui.Image(renderer.FrameBuffer.TextureId, size, new Vector2(0, 1), new Vector2(1, 0));
     ImGui.End();
     
-    if (Input.IsKeyDown(SDLScancode.F))
+    if (Input.IsKeyReleased(SDLScancode.F))
     {
-        vert = shaderc.Compile(File.ReadAllText("../../../Shaders/SpirV/Test.vert"), "../../../Shaders/SpirV/Test.vert", ShadercShaderKind.VertexShader, "main", out vertReflection);
-        frag = shaderc.Compile(File.ReadAllText("../../../Shaders/SpirV/Test.frag"), "../../../Shaders/SpirV/Test.frag", ShadercShaderKind.FragmentShader, "main", out fragReflection);
-        renderer.Shader = new Shader(new []{new ShaderStage(vert.Value, ShaderType.Vertex), new ShaderStage(frag.Value, ShaderType.Fragment)});
+        // Reload the shader
+        shader.Dispose();
+        shader = new Shader(new ShaderStage(File.ReadAllText("../../../Shaders/Test.vert"), ShaderType.Vertex), new ShaderStage(File.ReadAllText("../../../Shaders/Test.frag"), ShaderType.Fragment));
+        renderer.Shader = shader;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.W))
+    {
+        pos = new Complex(pos.Real, pos.Imaginary + 0.01f * zoom);
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.S))
+    {
+        pos = new Complex(pos.Real, pos.Imaginary - 0.01f * zoom);
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.A))
+    {
+        pos = new Complex(pos.Real - 0.01f * zoom, pos.Imaginary);
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.D))
+    {
+        pos = new Complex(pos.Real + 0.01f * zoom, pos.Imaginary);
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Q))
+    {
+        zoom *= 1.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.E))
+    {
+        zoom *= 0.99f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Right))
+    {
+        posLight.X += 0.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Left))
+    {
+        posLight.X -= 0.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Up))
+    {
+        posLight.Y += 0.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Down))
+    {
+        posLight.Y -= 0.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Rshift))
+    {
+        posLight.Z += 0.01f;
+    }
+    
+    if (Input.IsKeyDown(SDLScancode.Rctrl))
+    {
+        posLight.Z -= 0.01f;
     }
     
     renderer.Render();

@@ -17,6 +17,9 @@ public class ShaderC : IShader
     private ShaderReflectionData _vertexReflection;
     private ShaderReflectionData _fragmentReflection;
     
+    private UBO _vertexUniformBuffer;
+    private UBO _fragmentUniformBuffer;
+    
     public ShaderC(string vertPath, string fragPath)
     {
         var shaderc = new ShaderCManager(ShaderCManager.DefaultOptions);
@@ -30,6 +33,14 @@ public class ShaderC : IShader
                 new ShaderStage(vert.Value, ShaderType.Vertex),
                 new ShaderStage(frag.Value, ShaderType.Fragment)
             };
+         
+            _vertexUniformBuffer = new UBO();
+            _vertexUniformBuffer.Construct(_vertexReflection);
+            
+            _fragmentUniformBuffer = new UBO();
+            _fragmentUniformBuffer.Construct(_fragmentReflection);
+            
+            
             
             Compile();
         }
@@ -37,8 +48,6 @@ public class ShaderC : IShader
         {
             Stages = new List<ShaderStage>();
         }
-        
-        Compile();
     }
 
 
@@ -112,9 +121,15 @@ public class ShaderC : IShader
     {
         var gl = GraphicsContext.GL;
         var location = gl.GetUniformLocation(Handle, name);
-        
-        // Becauseeee uniforms work differently in spirv shaders we're going to have to cook somethin else up
-        // yeaaaaaaah
+
+        if (vertexOnly)
+        {
+            
+        }
+        else
+        {
+            
+        }
     }
 
 }

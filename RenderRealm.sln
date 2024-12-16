@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderRealm", "RenderRealm\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderRealm.Graphics", "RenderRealm.Graphics\RenderRealm.Graphics.csproj", "{4F2177D3-D602-487E-BFBA-384B0D925093}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeRealm", "ComputeRealm\ComputeRealm.csproj", "{29733861-EDD2-4B3E-9658-B6A552C49380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{4F2177D3-D602-487E-BFBA-384B0D925093}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F2177D3-D602-487E-BFBA-384B0D925093}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F2177D3-D602-487E-BFBA-384B0D925093}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29733861-EDD2-4B3E-9658-B6A552C49380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29733861-EDD2-4B3E-9658-B6A552C49380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29733861-EDD2-4B3E-9658-B6A552C49380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29733861-EDD2-4B3E-9658-B6A552C49380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

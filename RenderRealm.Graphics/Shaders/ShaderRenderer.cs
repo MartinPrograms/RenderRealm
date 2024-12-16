@@ -7,6 +7,7 @@ public class ShaderRenderer : IDisposable, IRenderer
     public Shader Shader { get; set; }
     public Mesh Mesh { get; set; }
     public FrameBuffer FrameBuffer { get; set; }
+    public Action SetUniforms { get; set; }
     
     public ShaderRenderer(Shader shader, Mesh mesh, int width, int height)
     {
@@ -19,6 +20,9 @@ public class ShaderRenderer : IDisposable, IRenderer
     {
         FrameBuffer.Bind();
         Shader.Use();
+        Shader.SetUniform("aspectRatio", (float)FrameBuffer.Width / FrameBuffer.Height);
+        
+        SetUniforms?.Invoke();
         Mesh.Render();
         FrameBuffer.Unbind();
     }

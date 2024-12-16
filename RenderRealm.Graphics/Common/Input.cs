@@ -37,8 +37,6 @@ public static class Input
         _keysDown.Clear();
         _keysDown.AddRange(_nextKeysDown);
         
-        _nextKeysDown.Clear();
-        
         _previousMousePosition = _mousePosition;
         _mousePosition = _nextMousePosition;
         

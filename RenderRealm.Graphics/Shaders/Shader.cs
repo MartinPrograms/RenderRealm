@@ -121,6 +121,54 @@ public class Shader : IShader
         {
             gl.UniformMatrix4fv(location, 1, false, ref m4.M11);
         }
+        else if (value is Complex c)
+        {
+            gl.Uniform2d(location, c.Real, c.Imaginary);
+        }
+        else if (value is double d)
+        {
+            gl.Uniform1d(location, d);
+        }
+        else
+        {
+            throw new ArgumentException("Invalid uniform type");
+        }
+    }
+
+    public void SetArray<T>(string name, T[] value)
+    {
+        if (value.Length == 0)
+        {
+            return;
+        }
+        
+        var gl = GraphicsContext.GL;
+        var location = gl.GetUniformLocation(Handle, name);
+        
+        if (value[0] is int i)
+        {
+            gl.Uniform1iv(location, value.Length, value.Cast<int>().ToArray());
+        }
+        else if (value[0] is float f)
+        {
+            gl.Uniform1fv(location, value.Length, value.Cast<float>().ToArray());
+        }
+        else if (value[0] is Vector2 v2)
+        {
+            gl.Uniform2fv(location, value.Length, value.Cast<Vector2>().SelectMany(x => new[] {x.X, x.Y}).ToArray());
+        }
+        else if (value[0] is Vector3 v3)
+        {
+            gl.Uniform3fv(location, value.Length, value.Cast<Vector3>().SelectMany(x => new[] {x.X, x.Y, x.Z}).ToArray());
+        }
+        else if (value[0] is Vector4 v4)
+        {
+            gl.Uniform4fv(location, value.Length, value.Cast<Vector4>().SelectMany(x => new[] {x.X, x.Y, x.Z, x.W}).ToArray());
+        }
+        else if (value[0] is Complex c)
+        {
+            gl.Uniform2fv(location, value.Length, value.Cast<Complex>().SelectMany(x => new[] {(float)x.Real, (float)x.Imaginary}).ToArray());
+        }
         else
         {
             throw new ArgumentException("Invalid uniform type");
@@ -180,18 +228,33 @@ void main()
         Console.WriteLine("Error shader created");
     }
 
+    public void Reload()
+    {
+        Dispose();
+        foreach (var stage in Stages)
+        {
+            if (string.IsNullOrEmpty(stage.Path))
+            {
+                continue;
+            }
+            
+            stage.Source = File.ReadAllText(stage.Path);
+        }
+    }
 }
 
 public unsafe class ShaderStage
 {
     public string Source { get; set; }
+    public string Path { get; set; }
     public byte[] SourceB { get; set; }
     public ShaderType Type { get; set; }
     public bool SpirV { get; }
-    public ShaderStage(string source, ShaderType type)
+    public ShaderStage(string source, ShaderType type, string path = "")
     {
         Source = source;
         Type = type;
+        Path = path;
         SpirV = false;
     }
     

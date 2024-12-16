@@ -196,12 +196,16 @@ public unsafe class Window
                 var buttonUpEvent = sdlEvent.Button;
                 MouseButton?.Invoke(buttonUpEvent);
                 break;
-                    
+            
             case SDLEventType.KeyDown:
                 var keyDownEvent = sdlEvent.Key;
-                KeyDown?.Invoke(keyDownEvent);
+                if (keyDownEvent.Repeat == 0)
+                {
+                    KeyDown?.Invoke(keyDownEvent);
+                }
+
                 break;
-                    
+            
             case SDLEventType.KeyUp:
                 var keyUpEvent = sdlEvent.Key;
                 KeyUp?.Invoke(keyUpEvent);
